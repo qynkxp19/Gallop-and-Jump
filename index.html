@@ -232,7 +232,6 @@ ownedSkins:['classic'],ownedSaddles:['none'],ownedLevels:['farm'],
 equipSkin:'classic',equipSaddle:'none',equipLevel:'farm',
 streak:0,lastPlay:'',dailies:null,dailyDone:[0,0,0],
 bpLevel:0,bpPremium:0,bpClaimed:[],bpPremClaimed:[],
-friends:['Dusty','Blaze','Clover'],
 achievements:{first_game:0,wave5:0,wave10:0,collect100:0,buy_first:0,win_race:0}};}
 let save=FS(),shopExtra=0,shopShield=0,shopMagnet=0;
 function TS(){try{window.storage.set('gs_'+save.name,JSON.stringify(save)).catch(()=>{});}catch(e){}}
@@ -719,22 +718,41 @@ btn(16,H-38,80,28,'BACK','#E24B4A','#FFF','back','7px');
 
 function drawParty(){
 ctx.fillStyle='#0E0E1E';ctx.fillRect(0,0,W,H);
-ctx.font='12px "Press Start 2P",monospace';ctx.textAlign='center';ctx.fillStyle='#9B59B6';ctx.fillText('PARTY MODE',W/2,28);ctx.textAlign='left';
-let tsx=(W-330)/2;['create','random'].forEach((t,i)=>{let ac=partyTab===t;btn(tsx+i*170,44,160,22,t==='create'?'CREATE ROOM':'QUICK MATCH',ac?'#9B59B6':'#222',ac?'#FFF':'#888','party_'+t,'6px');});
-let sy=80,bx=W/2-140;
+ctx.font='12px "Press Start 2P",monospace';ctx.textAlign='center';ctx.fillStyle='#9B59B6';ctx.fillText('PARTY MODE',W/2,28);
+ctx.font='6px "Press Start 2P",monospace';ctx.fillStyle='#AAA';ctx.fillText('RACE TO WAVE 5 - FIRST TO FINISH WINS!',W/2,44);
+ctx.textAlign='left';
+let tsx=(W-330)/2;['create','random'].forEach((t,i)=>{let ac=partyTab===t;btn(tsx+i*170,54,160,24,t==='create'?'CREATE ROOM':'QUICK MATCH',ac?'#9B59B6':'#222',ac?'#FFF':'#888','party_'+t,'6px');});
+let sy=92,bx=W/2-140;
 if(partyTab==='create'){
 if(!partyCode){partyCode=Math.random().toString(36).substring(2,8).toUpperCase();partyPlayers=[save.name];}
-ctx.fillStyle='#1A1A30';rr(bx,sy,280,140,8);ctx.fill();
-ctx.font='16px "Press Start 2P",monospace';ctx.fillStyle='#FFD700';ctx.textAlign='center';ctx.fillText(partyCode,W/2,sy+32);
-ctx.font='7px "Press Start 2P",monospace';ctx.fillStyle='#FFF';
-partyPlayers.forEach((p,i)=>{ctx.fillStyle=i===0?'#4ADE80':'#FFF';ctx.fillText(p+(i===0?' (YOU)':''),W/2,sy+56+i*16);});
+ctx.fillStyle='#1A1A30';rr(bx,sy,280,180,8);ctx.fill();
+ctx.font='7px "Press Start 2P",monospace';ctx.fillStyle='#AAA';ctx.textAlign='center';ctx.fillText('ROOM CODE',W/2,sy+16);
+ctx.font='18px "Press Start 2P",monospace';ctx.fillStyle='#FFD700';ctx.fillText(partyCode,W/2,sy+40);
+ctx.font='6px "Press Start 2P",monospace';ctx.fillStyle='#888';ctx.fillText('SHARE THIS CODE WITH FRIENDS',W/2,sy+54);
+// Player list
+ctx.font='7px "Press Start 2P",monospace';ctx.fillStyle='#FFF';ctx.fillText('PLAYERS IN LOBBY:',W/2,sy+74);
+partyPlayers.forEach((p,i)=>{
+ctx.fillStyle=i===0?'#4ADE80':'#FFF';
+ctx.fillText(p+(i===0?' (YOU)':''),W/2,sy+92+i*16);
+});
+// Waiting dots
+if(partyPlayers.length<3){
+let dots='.'.repeat(1+Math.floor(Date.now()/500)%3);
+ctx.fillStyle='#888';ctx.font='6px "Press Start 2P",monospace';
+ctx.fillText('WAITING FOR PLAYERS'+dots,W/2,sy+92+partyPlayers.length*16);
+}
 ctx.textAlign='left';
-btn(W/2-50,sy+110,100,24,'START','#4ADE80','#333','start_race','7px');
-if(partyPlayers.length<3&&Math.random()<0.006)partyPlayers.push(['Dusty','Blaze','Clover'][partyPlayers.length-1]);
+btn(W/2-55,sy+148,110,26,'START RACE','#4ADE80','#333','start_race','6px');
+// Faster simulated joins
+if(partyPlayers.length<3&&Math.random()<0.02)partyPlayers.push(['Dusty','Blaze','Clover'][partyPlayers.length-1]);
 }else{
-ctx.fillStyle='#1A1A30';rr(bx,sy,280,70,8);ctx.fill();
-ctx.font='7px "Press Start 2P",monospace';ctx.fillStyle='#FFF';ctx.textAlign='center';ctx.fillText('FIND RANDOM MATCH',W/2,sy+24);ctx.textAlign='left';
-btn(W/2-40,sy+38,80,24,'GO','#4ADE80','#333','quick_match','7px');
+ctx.fillStyle='#1A1A30';rr(bx,sy,280,100,8);ctx.fill();
+ctx.font='8px "Press Start 2P",monospace';ctx.fillStyle='#FFF';ctx.textAlign='center';
+ctx.fillText('INSTANT MATCH',W/2,sy+24);
+ctx.font='6px "Press Start 2P",monospace';ctx.fillStyle='#AAA';
+ctx.fillText('RACE AGAINST 2 RANDOM PLAYERS',W/2,sy+42);
+ctx.textAlign='left';
+btn(W/2-55,sy+56,110,30,'PLAY NOW','#4ADE80','#333','quick_match','7px');
 }
 btn(16,H-38,80,28,'BACK','#E24B4A','#FFF','back','7px');
 }
